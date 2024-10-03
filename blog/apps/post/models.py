@@ -7,6 +7,12 @@ import os
 
 # Create your models here.
 
+class Category(models.Model):
+    title = models.CharField(max_length=100)
+
+    def str(self):
+        return self.title
+
 class Post(models.Model):
     id=models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title= models.CharField(max_length=200)
@@ -17,6 +23,8 @@ class Post(models.Model):
     creation_date = models.DateTimeField(default=timezone.now)
     modification_date = models.DateTimeField(auto_now=True)
     allow_comments = models.BooleanField(default=True)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='posts')
+    
 
     def __str__(self):
         return self.title
@@ -46,7 +54,7 @@ class Post(models.Model):
 class Comment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     content = models.TextField(max_length=500)
-    creation_date = models.DateTimeField(auto_now_adds=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
     author= models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
 
